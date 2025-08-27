@@ -1,0 +1,39 @@
+name: Build Pacman Package
+
+on:
+  push:
+    paths:
+      - "pkgs/**/PKGBUILD"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: base-devel git pacman
+
+      - name: Build package
+        shell: msys2 {0}
+        run: |
+          cd pkgs/*
+          makepkg -s --noconfirm
+
+      - name: Move package to repo
+        shell: msys2 {0}
+        run: |
+          mkdir -p x86_64
+          cp pkgs/*/*.pkg.tar.zst x86_64/
+          repo-add x86_64/myrepo.db.tar.gz x86_64/*.pkg.tar.zst
+
+      - name: Commit & push
+        run: |
+          git config --global user.name "pradbot"
+          git config --global user.email "you@example.com"
+          git add x86_64/
+          git commit -m "Add new package"
+          git push
