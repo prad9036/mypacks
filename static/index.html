@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pradeep's Package Builder</title>
+</head>
+<body>
+  <h1>Create a Pacman Package</h1>
+  <form id="pkgForm">
+    <label>Package Name: <input type="text" name="pkgname"></label><br>
+    <label>Version: <input type="text" name="pkgver" value="1.0"></label><br>
+    <label>Description: <input type="text" name="desc"></label><br>
+    <label>Command Script:<br>
+      <textarea name="script" rows="6" cols="40"></textarea>
+    </label><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+  document.getElementById("pkgForm").onsubmit = async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    // Save as JSON in your repo via GitHub API
+    alert("Would send to GitHub API: " + JSON.stringify(data, null, 2));
+  }
+  </script>
+</body>
+</html>
