@@ -1,0 +1,9 @@
+Package: pradbot
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Pradeep <you@example.com>
+Depends: curl, bash
+Description: Simple upload/download helper for pradbot.pythonanywhere.com
+ Provides `up` and `dl` commands automatically in your shell.

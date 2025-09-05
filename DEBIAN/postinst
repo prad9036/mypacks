@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+if ! grep -q "source /usr/bin/pradbot.sh" "$HOME/.bashrc"; then
+    echo 'source /usr/bin/pradbot.sh' >> "$HOME/.bashrc"
+fi
