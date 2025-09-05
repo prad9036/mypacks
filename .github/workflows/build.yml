@@ -1,0 +1,52 @@
+name: Build Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      pkgname:
+        description: "Package name"
+        required: true
+      pkgver:
+        description: "Package version"
+        required: true
+      desc:
+        description: "Description"
+        required: false
+      script:
+        description: "Script to run"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create PKGBUILD
+        run: |
+          mkdir -p pkgs/${{ github.event.inputs.pkgname }}
+          cat > pkgs/${{ github.event.inputs.pkgname }}/PKGBUILD <<'EOF'
+pkgname=${{ github.event.inputs.pkgname }}
+pkgver=${{ github.event.inputs.pkgver }}
+pkgrel=1
+arch=('any')
+pkgdesc="${{ github.event.inputs.desc }}"
+license=('MIT')
+source=()
+md5sums=()
+package() {
+  mkdir -p "$pkgdir/usr/bin"
+  cat <<'EOS' > "$pkgdir/usr/bin/${{ github.event.inputs.pkgname }}"
+${{ github.event.inputs.script }}
+EOS
+  chmod +x "$pkgdir/usr/bin/${{ github.event.inputs.pkgname }}"
+}
+EOF
+
+      - name: Commit and Push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add pkgs/
+          git commit -m "Add package ${{ github.event.inputs.pkgname }} ${{ github.event.inputs.pkgver }}"
+          git push
